@@ -3,7 +3,7 @@
 
 Name: rubygem-%{gem_name}
 Version: 2.0.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Your friendly neighborhood hash toolkit
 Group: Development/Languages
 License: MIT
@@ -76,5 +76,8 @@ popd
 %{gem_instdir}/spec/
 
 %changelog
+* Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.5-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Mon Jul 08 2013 Axilleas Pipinellis <axilleaspi@ymail.com> - 2.0.5-1
 - Initial package
