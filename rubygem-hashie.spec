@@ -3,7 +3,7 @@
 
 Name: rubygem-%{gem_name}
 Version: 2.0.5
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Your friendly neighborhood hash toolkit
 Group: Development/Languages
 License: MIT
@@ -14,7 +14,7 @@ Requires: ruby(rubygems)
 BuildRequires: ruby(release)
 BuildRequires: rubygems-devel 
 BuildRequires: ruby
-BuildRequires: rubygem(rspec) 
+BuildRequires: rubygem(rspec) < 3.0
 BuildArch: noarch
 Provides: rubygem(%{gem_name}) = %{version}
 
@@ -53,7 +53,7 @@ cp -pa .%{gem_dir}/* \
 
 %check
 pushd .%{gem_instdir}
-rspec spec/
+rspec2 spec/
 popd
 
 %files
@@ -76,6 +76,9 @@ popd
 %{gem_instdir}/spec/
 
 %changelog
+* Mon Jun 29 2015 Josef Stribny <jstribny@redhat.com> - 2.0.5-5
+- Fix FTBFS: use RSpec 2.x
+
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.5-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
