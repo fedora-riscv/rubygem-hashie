@@ -5,7 +5,6 @@ Name: rubygem-%{gem_name}
 Version: 2.0.5
 Release: 10%{?dist}
 Summary: Your friendly neighborhood hash toolkit
-Group: Development/Languages
 License: MIT
 URL: https://github.com/intridea/hashie
 Source0: https://rubygems.org/gems/%{gem_name}-%{version}.gem
@@ -24,7 +23,6 @@ Currently includes Mash (Mocking Hash) and Dash (Discrete Hash).
 
 %package doc
 Summary: Documentation for %{name}
-Group: Documentation
 Requires: %{name} = %{version}-%{release}
 BuildArch: noarch
 
