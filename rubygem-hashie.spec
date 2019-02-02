@@ -3,7 +3,7 @@
 
 Name: rubygem-%{gem_name}
 Version: 2.0.5
-Release: 10%{?dist}
+Release: 11%{?dist}
 Summary: Your friendly neighborhood hash toolkit
 License: MIT
 URL: https://github.com/intridea/hashie
@@ -74,6 +74,9 @@ popd
 %{gem_instdir}/spec/
 
 %changelog
+* Sat Feb 02 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.0.5-11
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.0.5-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
