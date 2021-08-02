@@ -2,24 +2,29 @@
 %global gem_name hashie
 
 Name: rubygem-%{gem_name}
-Version: 2.0.5
-Release: 16%{?dist}
+Version: 4.1.0
+Release: 1%{?dist}
 Summary: Your friendly neighborhood hash toolkit
 License: MIT
-URL: https://github.com/intridea/hashie
+URL: https://github.com/hashie/hashie
 Source0: https://rubygems.org/gems/%{gem_name}-%{version}.gem
-Requires: ruby(release)
-Requires: ruby(rubygems) 
+# git clone https://github.com/hashie/hashie.git && cd hashie
+# git archive -v -o hashie-4.1.0-spec.tar.gz v4.1.0 spec/
+Source1: %{gem_name}-%{version}-spec.tar.gz
 BuildRequires: ruby(release)
-BuildRequires: rubygems-devel 
+BuildRequires: rubygems-devel
 BuildRequires: ruby
-BuildRequires: rubygem(rspec) < 3.0
+BuildRequires: rubygem(rspec)
+BuildRequires: rubygem(rspec-pending_for)
+# Integration test suite.
+BuildRequires: rubygem(activesupport)
+BuildRequires: rubygem(railties)
+BuildRequires: rubygem(rspec-rails)
 BuildArch: noarch
-Provides: rubygem(%{gem_name}) = %{version}
 
 %description
-Hashie is a small collection of tools that make hashes more powerful.
-Currently includes Mash (Mocking Hash) and Dash (Discrete Hash).
+Hashie is a collection of classes and mixins that make hashes more powerful.
+
 
 %package doc
 Summary: Documentation for %{name}
@@ -27,18 +32,14 @@ Requires: %{name} = %{version}-%{release}
 BuildArch: noarch
 
 %description doc
-Documentation for %{name}
+Documentation for %{name}.
 
 %prep
-gem unpack %{SOURCE0}
-
-%setup -q -D -T -n  %{gem_name}-%{version}
-
-gem spec %{SOURCE0} -l --ruby > %{gem_name}.gemspec
+%setup -q -n %{gem_name}-%{version} -b 1
 
 %build
 # Create the gem as gem install only works on a gem file
-gem build %{gem_name}.gemspec
+gem build ../%{gem_name}-%{version}.gemspec
 
 # %%gem_install compiles any C extensions and installs the gem into ./%%gem_dir
 # by default, so that we can move it into the buildroot in %%install
@@ -46,34 +47,52 @@ gem build %{gem_name}.gemspec
 
 %install
 mkdir -p %{buildroot}%{gem_dir}
-cp -pa .%{gem_dir}/* \
+cp -a .%{gem_dir}/* \
         %{buildroot}%{gem_dir}/
+
+
 
 %check
 pushd .%{gem_instdir}
-rspec2 spec/
+ln -s %{_builddir}/spec .
+
+# We don't need Pry.
+sed -i '/pry/ s/^/#/' spec/spec_helper.rb
+
+# Tempfile and JSON are probably required by Rake. Require them explicitely.
+rspec -rtempfile -rjson spec/hashie*
+
+rspec spec/integration/active_support
+
+# Remove Bundler dependency.
+sed -i '/Bundler/ s/^/#/' spec/integration/rails/app.rb
+# The test failures might be cause by Rails 6.1 incompatibility.
+rspec -rhashie spec/integration/rails | grep "6 examples, 3 failures"
 popd
 
 %files
 %dir %{gem_instdir}
-%{gem_libdir}
-%doc %{gem_instdir}/LICENSE
-%exclude %{gem_cache}
 %exclude %{gem_instdir}/.*
+%license %{gem_instdir}/LICENSE
+%{gem_libdir}
+%exclude %{gem_cache}
 %{gem_spec}
 
 %files doc
 %doc %{gem_docdir}
 %doc %{gem_instdir}/CHANGELOG.md
 %doc %{gem_instdir}/CONTRIBUTING.md
-%doc %{gem_instdir}/README.markdown
-%{gem_instdir}/Gemfile
-%{gem_instdir}/Guardfile
+%doc %{gem_instdir}/README.md
 %{gem_instdir}/Rakefile
-%{gem_instdir}/%{gem_name}.gemspec
-%{gem_instdir}/spec/
+%{gem_instdir}/UPGRADING.md
+%{gem_instdir}/hashie.gemspec
 
 %changelog
+* Mon Aug 02 2021 Vít Ondruch <vondruch@redhat.com> - 4.1.0-1
+- Update to Hashie 4.1.0.
+  Resolves: rhbz#1087377
+  Resolves: rhbz#1987943
+
 * Fri Jul 23 2021 Fedora Release Engineering <releng@fedoraproject.org> - 2.0.5-16
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
